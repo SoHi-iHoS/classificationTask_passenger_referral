@@ -9,6 +9,10 @@ This project analyzes airline review data spanning from 2006 to 2019 for popular
 - **Time Period**: 2006-2019
 - **Content**: Includes multiple choice ratings and free text reviews
 
+## Project Goal
+
+To develop a model that accurately predicts whether a passenger will recommend an airline based on their review and ratings, providing valuable insights for the airline industry on customer satisfaction factors.
+
 ## Data Cleaning Process
 
 The original dataset required significant preprocessing:
@@ -39,6 +43,35 @@ The original dataset required significant preprocessing:
    - Separated data into:
      - `df_1` (Work Dataset): Contains rows with fewer missing values
      - `df_unseen` (Unseen Dataset): Contains rows with significant missing values (>7)
+    
+## Data Quality Analysis
+
+### Categorical Variables Validation
+A thorough examination was conducted to ensure data integrity:
+
+- **Frequency distribution analysis** for each categorical variable to identify potential anomalies
+- **Range verification** to confirm all ordinal variables stayed within defined scales (1-5 rating)
+- **Domain validity checks** to ensure categorical values made logical sense within context
+- **Cross-referencing** between related variables to identify inconsistencies
+- **Historical comparison** against expected distributions based on domain knowledge
+
+No outliers or anomalous entries were found in categorical variables, confirming high data integrity.
+
+### Data Transformation
+
+- **Feature Encoding**:
+  - **One-Hot Encoding** for `traveller_type` (with `drop_first=True` to avoid dummy variable trap)
+  - **Ordinal Encoding** for `cabin` (Economy: 0, Premium Economy: 1, Business: 2, First Class: 3)
+  - Target variable (`recommended`) conversion from 'yes'/'no' to binary 1/0
+
+- **Scaling**:
+  - **Min-Max scaling** was chosen because it:
+    - Preserves relationships within features
+    - Improves interpretability (0-1 range)
+    - Handles outliers appropriately
+    - Creates feature uniformity across different scales
+  - No dimensionality reduction was applied due to the limited feature set (only 10 features)
+
 
 ## Modeling Approaches
 
@@ -79,10 +112,6 @@ Three distinct datasets were created for different modeling approaches:
 - Specifically uses the `cardiffnlp/twitter-roberta-base-sentiment` model
 - Processing time: 25-30 minutes for ~4,500 reviews
 - Incorporates text sentiment as predictive features, capturing information not contained in numerical ratings
-
-## Project Goal
-
-To develop a model that accurately predicts whether a passenger will recommend an airline based on their review and ratings, providing valuable insights for the airline industry on customer satisfaction factors.
 
 ## Data Preparation Strategies
 
@@ -141,65 +170,6 @@ Three machine learning models were developed and optimized:
   - Exceptional stability across different data samples (low standard deviations)
   - Near-perfect ROC-AUC score of 0.9922
   - Well-balanced precision and recall
-
-## Data Cleaning Process
-
-The original dataset required significant preprocessing and careful analysis:
-
-1. **Basic Cleaning**
-   - Removed blank rows (rows with all NaN values)
-   - Converted data types as needed for analysis
-
-2. **Date Processing** (`review_date_obj` function)
-   - Converted review dates to proper DateTime objects
-   - Extracted year information into a separate column
-   - Removed the redundant 'date_flown' column
-
-3. **Review Text Cleaning** (`customer_review_transform` function)
-   - Applied regex to remove unnecessary patterns:
-     - "É?? Trip Verified | ..."
-     - "Not Verified | ..."
-     - "City to City."
-
-4. **Route Information Extraction** (`create_to_from_via` function)
-   - Created three new columns from the 'route' column:
-     - 'from' (departure location)
-     - 'to' (arrival location)
-     - 'via' (connection point, if any)
-   - Removed the original 'route' column
-
-5. **Dataset Splitting** (`create_new_df` function)
-   - Separated data into:
-     - `df_1` (Work Dataset): Contains rows with fewer missing values
-     - `df_unseen` (Unseen Dataset): Contains rows with significant missing values (>7)
-
-## Data Quality Analysis
-
-### Categorical Variables Validation
-A thorough examination was conducted to ensure data integrity:
-
-- **Frequency distribution analysis** for each categorical variable to identify potential anomalies
-- **Range verification** to confirm all ordinal variables stayed within defined scales (1-5 rating)
-- **Domain validity checks** to ensure categorical values made logical sense within context
-- **Cross-referencing** between related variables to identify inconsistencies
-- **Historical comparison** against expected distributions based on domain knowledge
-
-No outliers or anomalous entries were found in categorical variables, confirming high data integrity.
-
-### Data Transformation
-
-- **Feature Encoding**:
-  - **One-Hot Encoding** for `traveller_type` (with `drop_first=True` to avoid dummy variable trap)
-  - **Ordinal Encoding** for `cabin` (Economy: 0, Premium Economy: 1, Business: 2, First Class: 3)
-  - Target variable (`recommended`) conversion from 'yes'/'no' to binary 1/0
-
-- **Scaling**:
-  - **Min-Max scaling** was chosen because it:
-    - Preserves relationships within features
-    - Improves interpretability (0-1 range)
-    - Handles outliers appropriately
-    - Creates feature uniformity across different scales
-  - No dimensionality reduction was applied due to the limited feature set (only 10 features)
 
 ## Key Findings
 
